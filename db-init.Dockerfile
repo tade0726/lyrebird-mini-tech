@@ -32,7 +32,6 @@ echo "Running database migrations..."
 uv run alembic upgrade head
 
 echo "Loading SQL dump files..."
-PGPASSWORD=${POSTGRES_PASSWORD:-lyrebird} psql -h postgres -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-app} -f /sql_dump/alembic_version.sql
 PGPASSWORD=${POSTGRES_PASSWORD:-lyrebird} psql -h postgres -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-app} -f /sql_dump/users.sql
 PGPASSWORD=${POSTGRES_PASSWORD:-lyrebird} psql -h postgres -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-app} -f /sql_dump/dictations.sql
 PGPASSWORD=${POSTGRES_PASSWORD:-lyrebird} psql -h postgres -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-app} -f /sql_dump/user_edits.sql
