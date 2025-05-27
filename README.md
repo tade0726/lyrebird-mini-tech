@@ -1,5 +1,23 @@
 # Lyrebird Mini Tech
 
+## What has implemented 
+
+- **Backend API** with table models, integrated with PostgreSQL
+  - API routes: `/api/src/users/routes.py` and `/api/src/dictations/routes.py`
+  - Database models: `/api/src/users/models.py` and `/api/src/dictations/models.py`
+  - Database connection: `/api/core/database.py`
+- **Alembic migration** database initialization
+  - Migration scripts: `/alembic/versions/`
+- **Langsmith trace** integration
+  - Implementation: `/api/src/dictations/service.py`
+  - OpenAI client wrapper: `_langsmith_trace_wrapper()` method
+  - Configuration: `/api/core/config.py`
+- **Langsmith prompt management**, supporting further iteration and evaluation with Langsmith toolkit
+  - Prompt synchronization: `/api/llm/sync_prompt.py`
+  - Prompt usage: `/api/src/dictations/service.py`
+- **Streamlit front-end** application
+  - Implementation: `/frontend/streamlit_app.py`
+
 
 ## How to setup
 
@@ -39,6 +57,11 @@ make init-db
 ### Start the dev server
 ```bash
 make dev-fastapi
+```
+
+### Start the dev frontend
+```bash
+make dev-frontend
 ```
 
 

@@ -87,3 +87,11 @@ async def preference_extract(
     )
 
     return await UserPreferencesService(session).preference_extract(user_edits)
+
+
+@router.get("/preferences", response_model=list[UserPreferencesResponse])
+async def get_user_preferences(
+    session: AsyncSession = Depends(get_session),
+    user: UserModel = Depends(get_current_user),
+) -> list[UserPreferencesResponse]:
+    return await UserPreferencesService(session).query_user_preferences(user.id)

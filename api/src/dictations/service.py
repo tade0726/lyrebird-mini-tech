@@ -176,7 +176,7 @@ class UserPreferencesService(BaseService):
             )
         )
 
-    async def _query_user_preferences(self, user_id: int) -> List[UserPreferencesModel]:
+    async def query_user_preferences(self, user_id: int) -> List[UserPreferencesModel]:
         return await self.repository.get_by_user_id(user_id)
 
     async def _create_user_edits(self, user_edits: UserEditsInput) -> UserEditsModel:
@@ -198,8 +198,8 @@ class UserPreferencesService(BaseService):
         user_edits: UserEditsModel = await self._create_user_edits(user_edits_input)
 
         # request LLM to extract rules, providing the rules that already exists
-        old_preferences: List[UserPreferencesModel] = (
-            await self._query_user_preferences(user_edits_input.user_id)
+        old_preferences: List[UserPreferencesModel] = await self.query_user_preferences(
+            user_edits_input.user_id
         )
 
         # extract rules

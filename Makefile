@@ -21,4 +21,6 @@ dev-fastapi:
 
 init-db:
 	uv run alembic upgrade head
-	
+
+dev-frontend:
+	uv run streamlit run frontend/lyrebird_app.py
