@@ -6,15 +6,16 @@ import requests
 import pyperclip
 import streamlit as st
 from streamlit_mic_recorder import mic_recorder
+from dotenv import load_dotenv
+
+load_dotenv(".env")
 
 # ============================================================================
 # CONFIGURATION
 # ============================================================================
 
 # API Configuration
-API_BASE_URL = os.environ.get(
-    "API_BASE_URL", "http://localhost:8000"
-)  # Read from environment variable with fallback
+API_BASE_URL = os.environ.get("API_BASE_URL")
 
 # ============================================================================
 # API ENDPOINTS

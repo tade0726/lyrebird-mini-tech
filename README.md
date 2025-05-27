@@ -36,7 +36,7 @@
 
 The mock data will be also injected when you start the services with docker-compose.
 
-After configuration on .env with necessary environment variables, you can start the services with docker-compose.
+After configuration on .env.docker with necessary environment variables, you can start the services with docker-compose.
 
 
 ```bash

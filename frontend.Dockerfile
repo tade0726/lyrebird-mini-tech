@@ -9,6 +9,9 @@ COPY pyproject.toml .
 # Copy uv lock file
 COPY uv.lock .
 
+# Copy .env file for secrets
+COPY .env.docker .env
+
 # Install dependencies using UV
 RUN uv sync --locked
 

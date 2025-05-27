@@ -10,7 +10,7 @@ from api.utils.migrations import run_migrations
 setup_logging()
 
 # Optional: Run migrations on startup
-run_migrations()
+# run_migrations()
 
 # Set up logger for this module
 logger = get_logger(__name__)

@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     """Application settings."""
 
     PROJECT_NAME: str = "Lyrebird Mini Tech API"
-    ENV: Literal["local", "dev", "staging", "production"] = "local"
-    DEBUG: bool = ENV == "local"
+    ENV: Literal["local", "docker"] = "local"
+    DEBUG: bool = True
 
     ## Postgres
     POSTGRES_SERVER: str
@@ -54,6 +54,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
+        extra="ignore",
     )
 
 

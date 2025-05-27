@@ -21,7 +21,7 @@ COPY alembic /app/alembic
 COPY api /app/api
 
 # Copy .env file for secrets
-COPY .env .
+COPY .env.docker .env
 
 # Create script to run migrations and load SQL dumps
 COPY <<EOF /app/init-db.sh

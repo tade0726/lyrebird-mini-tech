@@ -21,7 +21,7 @@ COPY alembic.ini .
 COPY alembic /app/alembic
 
 # Copy .env file for secrets
-COPY .env .
+COPY .env.docker .env
 
 # Expose port for the FastAPI application
 EXPOSE 8000

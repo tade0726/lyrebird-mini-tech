@@ -33,6 +33,10 @@ from api.src.dictations.schemas import DictationsCreateResponse, UserPreferences
 from api.src.dictations.repository import UserEditsRepository
 
 from api.core.config import settings
+from api.core.logging import get_logger
+
+
+logger = get_logger(__name__)
 
 
 class BaseService:
@@ -162,11 +166,18 @@ class UserPreferencesService(BaseService):
 
         rules = json.loads(rules)
 
-        return rules["memory_to_write"]
+        logger.debug(f"Extracted rules: {rules}")
+
+        if not rules["memory_to_write"]:
+            return None
+        else:
+            return rules["memory_to_write"]
 
     async def _update_user_preferences(
         self, user_edits_model: UserEditsModel, preference: str
     ) -> UserPreferencesModel:
+
+        logger.debug(f"user_edits_model: {user_edits_model}, preference: {preference}")
 
         return await self.repository.create(
             UserPreferencesCreate(
@@ -203,18 +214,30 @@ class UserPreferencesService(BaseService):
         )
 
         # extract rules
-        preference: str = await self._extract_rules(
+        preference: str | None = await self._extract_rules(
             user_edits, [preference.rules for preference in old_preferences]
         )
 
-        # update user preferences
-        preference_model: UserPreferencesModel = await self._update_user_preferences(
-            user_edits, preference
-        )
+        logger.debug(f"extracted preference: {preference}")
 
-        return UserPreferencesResponse(
-            id=preference_model.id,
-            user_id=user_edits_input.user_id,
-            rules=preference,
-            user_edits_id=user_edits.id,
-        )
+        preference_model: UserPreferencesModel | None = None
+
+        if preference:
+            # update user preferences
+            preference_model: UserPreferencesModel = (
+                await self._update_user_preferences(user_edits, preference)
+            )
+
+            return UserPreferencesResponse(
+                id=preference_model.id,
+                user_id=user_edits_input.user_id,
+                rules=preference,
+                user_edits_id=user_edits.id,
+            )
+        else:
+            return UserPreferencesResponse(
+                id=None,
+                user_id=user_edits_input.user_id,
+                rules="",
+                user_edits_id=user_edits.id,
+            )

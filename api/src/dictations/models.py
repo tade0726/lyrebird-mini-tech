@@ -29,7 +29,7 @@ class DictationsModel(Base):
     user = relationship("UserModel", back_populates="dictations")
 
     def __repr__(self):
-        return f"<Dictation(id={self.id}, user_id={self.user_id})>"
+        return f"<Dictation(id={self.id}, user_id={self.user_id}, text={self.text}, formatted_text={self.formatted_text})>"
 
 
 class UserEditsModel(Base):
@@ -58,7 +58,7 @@ class UserEditsModel(Base):
     )
 
     def __repr__(self):
-        return f"<UserEdit(id={self.id}, user_id={self.user_id}, dictation_id={self.dictation_id})>"
+        return f"<UserEdit(id={self.id}, user_id={self.user_id}, original_text={self.original_text}, edited_text={self.edited_text})>"
 
 
 class UserPreferencesModel(Base):
@@ -87,4 +87,4 @@ class UserPreferencesModel(Base):
     user_edit = relationship("UserEditsModel", back_populates="user_preferences")
 
     def __repr__(self):
-        return f"<UserPreference(id={self.id}, user_id={self.user_id}, user_edits_id={self.user_edits_id})>"
+        return f"<UserPreference(id={self.id}, user_id={self.user_id}, user_edits_id={self.user_edits_id}, rules={self.rules})>"
