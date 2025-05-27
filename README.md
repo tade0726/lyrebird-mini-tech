@@ -3,7 +3,7 @@
 
 
 ## Function Page
-![image](./assets/funcion_page.png)
+![image](./assets/function_page.png)
 
 
 
