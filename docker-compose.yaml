@@ -19,5 +19,53 @@ services:
       timeout: 5s
       retries: 5
 
+  db-init:
+    build:
+      context: .
+      dockerfile: ./db-init.Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-lyrebird}@postgres:5432/${POSTGRES_DB:-app}
+      POSTGRES_SERVER: postgres
+    volumes:
+      - ./api/db/sql_dump:/sql_dump
+      - ./alembic:/app/alembic
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./backend.Dockerfile
+    container_name: lyrebird-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-lyrebird}@postgres:5432/${POSTGRES_DB:-app}
+      POSTGRES_SERVER: postgres
+    volumes:
+      - ./api:/app/api
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend.Dockerfile
+    container_name: lyrebird-frontend
+    restart: always
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    environment:
+      API_BASE_URL: http://backend:8000
+    volumes:
+      - ./frontend:/app/frontend
+
 volumes:
   postgres_data:

@@ -12,7 +12,9 @@ from streamlit_mic_recorder import mic_recorder
 # ============================================================================
 
 # API Configuration
-API_BASE_URL = "http://localhost:8000"  # Change this to your actual API URL
+API_BASE_URL = os.environ.get(
+    "API_BASE_URL", "http://localhost:8000"
+)  # Read from environment variable with fallback
 
 # ============================================================================
 # API ENDPOINTS

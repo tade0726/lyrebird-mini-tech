@@ -19,9 +19,22 @@
   - Implementation: `/frontend/streamlit_app.py`
 
 
-## How to setup
+## How to setup with docker-compose(recommended, it also inject the mock data)
+
+After configuration on .env with necessary environment variables, you can start the services with docker-compose.
 
 
+```bash
+make start-service
+```
+
+Frontend will be available at http://localhost:8501
+Backend API will be available at http://localhost:8000/docs
+
+Frontend login with username: `1@2.com` and password: `1`
+
+
+## How to setup in local environment 
 I have created a Makefile to help you setup the environment with commands.
 
 ### Prepare python environment
@@ -64,16 +77,4 @@ make dev-fastapi
 make dev-frontend
 ```
 
-
-## TODO
-
-- [x] docker
-- [x] database ORM
-- [x] prompts
-- [x] service
-- [x] fix preference logic, need an edit obj creation then preferences creation
-    -  [x] create user edit
-    -  [x] create user preferences
-- [ ] env frame work
-- [ ] frontend
 
