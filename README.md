@@ -13,6 +13,8 @@
   - API routes: `/api/src/users/routes.py` and `/api/src/dictations/routes.py`
   - Database models: `/api/src/users/models.py` and `/api/src/dictations/models.py`
   - Database connection: `/api/core/database.py`
+- **Frontend** with Streamlit
+  - Implementation: `/frontend/streamlit_app.py`
 - **Alembic migration** database initialization
   - Migration scripts: `/alembic/versions/`
 - **Langsmith trace** integration
