@@ -1,4 +1,4 @@
-INSERT INTO public.user_edits (id, user_id, edited_text, created_at, updated_at, original_text) VALUES (1, 3, e'PATIENT INFORMATION:
+INSERT INTO public.user_edits (id, user_id, edited_text, created_at, updated_at, original_text) VALUES (0, 0, e'PATIENT INFORMATION:
 - Patient Name: [Name]
 - Provider: [Clinician\'s name & credential]
 - Date: [Not documented]

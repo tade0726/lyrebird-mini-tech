@@ -1,5 +1,12 @@
 # Lyrebird Mini Tech
 
+
+
+## Function Page
+![image](./assets/funcion_page.png)
+
+
+
 ## What has implemented 
 
 - **Backend API** with table models, integrated with PostgreSQL
