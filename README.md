@@ -19,7 +19,9 @@
   - Implementation: `/frontend/streamlit_app.py`
 
 
-## How to setup with docker-compose(recommended, it also inject the mock data)
+## How to setup with docker-compose(Recommended)
+
+The mock data will be also injected when you start the services with docker-compose.
 
 After configuration on .env with necessary environment variables, you can start the services with docker-compose.
 
