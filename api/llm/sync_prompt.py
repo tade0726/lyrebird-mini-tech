@@ -13,6 +13,9 @@ from langsmith.utils import LangSmithConflictError
 from api.core.config import settings
 
 
+PROMPT_PATH = "api/llm/prompts/"
+
+
 def update_prompt(prompt_name: str, prompt_template: str):
 
     # init env variables from st.secrets, put them in os.environ
@@ -39,7 +42,7 @@ def main(templates: List[dict]):
 
 
 def local_prompt_reader(prompt_name: str):
-    with open(f"api/core/llm/prompts/{prompt_name}.md", "r") as f:
+    with open(f"{PROMPT_PATH}/{prompt_name}.md", "r") as f:
         return f.read()
 
 
