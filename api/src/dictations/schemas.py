@@ -57,7 +57,7 @@ class UserPreferencesCreate(BaseModel):
 
     user_id: int
     user_edits_id: int
-    rules: str
+    rules: str | None
 
 
 class UserPreferencesResponse(UserPreferencesCreate):

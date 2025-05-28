@@ -5,8 +5,6 @@ Deal with LLM SDK and business logic
 from openai import AsyncOpenAI
 from typing import Dict, Any
 
-from langchain.prompts import Prompt
-
 import tempfile
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
@@ -69,7 +67,7 @@ class DictationsService(BaseService):
 
         system_massage = {
             "role": "system",
-            "content": str(system_prompt),
+            "content": system_prompt.format(foo="bar"),
         }
 
         # pack the context
@@ -166,7 +164,7 @@ class UserPreferencesService(BaseService):
         # system message
         system_message = {
             "role": "system",
-            "content": str(system_prompt),
+            "content": system_prompt.format(foo="bar"),
         }
 
         # user message
@@ -208,7 +206,7 @@ class UserPreferencesService(BaseService):
             return rules["memory_to_write"]
 
     async def _update_user_preferences(
-        self, user_edits_model: UserEditsModel, preference: str
+        self, user_edits_model: UserEditsModel, preference: str | None
     ) -> UserPreferencesModel:
 
         logger.debug(f"user_edits_model: {user_edits_model}, preference: {preference}")
@@ -262,16 +260,9 @@ class UserPreferencesService(BaseService):
                 await self._update_user_preferences(user_edits, preference)
             )
 
-            return UserPreferencesResponse(
-                id=preference_model.id,
-                user_id=user_edits_input.user_id,
-                rules=preference,
-                user_edits_id=user_edits.id,
-            )
-        else:
-            return UserPreferencesResponse(
-                id=None,
-                user_id=user_edits_input.user_id,
-                rules="",
-                user_edits_id=user_edits.id,
-            )
+        return UserPreferencesResponse(
+            id=preference_model.id if preference_model else None,
+            user_id=user_edits_input.user_id,
+            rules=preference,
+            user_edits_id=user_edits.id,
+        )
