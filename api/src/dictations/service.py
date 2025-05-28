@@ -3,6 +3,9 @@ Deal with LLM SDK and business logic
 """
 
 from openai import AsyncOpenAI
+from typing import Dict, Any
+
+from langchain.prompts import Prompt
 
 import tempfile
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -59,20 +62,35 @@ class DictationsService(BaseService):
 
     async def _format_dictation(self, input: DictationFormatInput) -> str:
 
-        # prompt
-        prompt = self.langsmith_client.pull_prompt(settings.FORMAT_PROMPT)
+        # prompts
+        system_prompt: Prompt = self.langsmith_client.pull_prompt(
+            settings.FORMAT_PROMPT
+        )
+
+        system_massage = {
+            "role": "system",
+            "content": str(system_prompt),
+        }
+
+        # pack the context
+        user_massage = {
+            "role": "user",
+            "content": """
+            ### USER FORMATTING PREFERENCES
+            {preferences}
+
+            ### TRANSCRIPT TO PROCESS
+            {transcript}
+            """.format(
+                preferences="\n".join(input.preferences),
+                transcript=input.transcript,
+            ),
+        }
 
         # parameters
         params = {
             "model": settings.DEFAULT_LLM_TEXT_MODEL,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": prompt.format(
-                        transcript=input.transcript, preferences=input.preferences
-                    ),
-                }
-            ],
+            "messages": [system_massage, user_massage],
         }
 
         # call LLM
@@ -141,30 +159,46 @@ class UserPreferencesService(BaseService):
         self, user_edits: UserEditsModel, preferences: List[str]
     ) -> UserPreferencesResponse:
         # prompt
-        prompt = self.langsmith_client.pull_prompt(settings.EXTRACT_RULES_PROMPT)
+        system_prompt: Prompt = self.langsmith_client.pull_prompt(
+            settings.EXTRACT_RULES_PROMPT
+        )
+
+        # system message
+        system_message = {
+            "role": "system",
+            "content": str(system_prompt),
+        }
+
+        # user message
+        user_message = {
+            "role": "user",
+            "content": """
+            ### ORIGINAL AI VERSION 
+            {llm_version}
+
+            ### USER-EDITED VERSION 
+            {user_version}
+
+            ### EXISTING USER PREFERENCES 
+            {preferences}
+            """.format(
+                llm_version=user_edits.original_text,
+                user_version=user_edits.edited_text,
+                preferences="\n".join(preferences),
+            ),
+        }
 
         # parameters
         params = {
             "model": settings.DEFAULT_LLM_TEXT_MODEL,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": prompt.format(
-                        llm_version=user_edits.original_text,
-                        user_version=user_edits.edited_text,
-                        preferences="\n".join(preferences),
-                    ),
-                }
-            ],
+            "messages": [system_message, user_message],
             "response_format": {"type": "json_object"},
         }
 
         # call LLM
         response = await self.openai_client.chat.completions.create(**params)
 
-        rules: str = response.choices[0].message.content
-
-        rules = json.loads(rules)
+        rules = json.loads(response.choices[0].message.content)
 
         logger.debug(f"Extracted rules: {rules}")
 

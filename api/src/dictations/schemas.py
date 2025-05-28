@@ -64,4 +64,4 @@ class UserPreferencesResponse(UserPreferencesCreate):
     """Schema for UserPreferencesResponse data."""
 
     model_config = ConfigDict(from_attributes=True)
-    id: int
+    id: int | None
