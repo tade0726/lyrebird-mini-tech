@@ -59,9 +59,9 @@ All memories must be:
 
 Return **exactly one** JSON object with this structure:
 ```json
-{
-  "memory_to_write": "<one concise formatting preference>" OR false
-}
+{{
+    "memory_to_write": "<one concise formatting preference>" OR false
+}}
 ```
 
 - If you identify a new formatting preference: include it as a string
