@@ -1,95 +1,82 @@
 # Lyrebird Mini Tech
 
+Lyrebird Mini Tech is a small demo application that showcases a speech dictation workflow built with **FastAPI** and **Streamlit**. Audio is transcribed using OpenAI's `whisper-1` model, formatted with user preferences and stored in PostgreSQL. The project integrates with **LangSmith** for prompt management and tracing.
 
+![Function Page](./assets/function_page.png)
 
-## Function Page
-![image](./assets/function_page.png)
+## Features
 
+- **FastAPI backend** with authentication and PostgreSQL models
+- **Streamlit frontend** for uploading audio and viewing formatted results
+- **OpenAI Whisper** audio transcription and GPT formatting
+- **User preference extraction** from edited text
+- **LangSmith integration** for tracing and prompt storage
+- **Alembic migrations** for database setup
 
+## Getting Started
 
-## What has implemented 
+### Docker Compose (recommended)
 
-- **Backend API** with table models, integrated with PostgreSQL
-  - API routes: `/api/src/users/routes.py` and `/api/src/dictations/routes.py`
-  - Database models: `/api/src/users/models.py` and `/api/src/dictations/models.py`
-  - Database connection: `/api/core/database.py`
-- **Frontend** with Streamlit
-  - Implementation: `/frontend/streamlit_app.py`
-- **Alembic migration** database initialization
-  - Migration scripts: `/alembic/versions/`
-- **Langsmith trace** integration
-  - Implementation: `/api/src/dictations/service.py`
-  - OpenAI client wrapper: `_langsmith_trace_wrapper()` method
-  - Configuration: `/api/core/config.py`
-- **Langsmith prompt management**, supporting further iteration and evaluation with Langsmith toolkit
-  - Prompt synchronization: `/api/llm/sync_prompt.py`
-  - Prompt usage: `/api/src/dictations/service.py`
-- **Streamlit front-end** application
-  - Implementation: `/frontend/streamlit_app.py`
-
-
-
-# Setup
-
-
-## How to setup with docker-compose(Recommended)
-
-The mock data will be also injected when you start the services with docker-compose.
-
-After configuration on .env.docker with necessary environment variables, you can start the services with docker-compose.
-
+1. Copy `.env.docker.example` to `.env.docker` and adjust the values.
+2. Start the services:
 
 ```bash
 make start-service
 ```
 
-Frontend will be available at http://localhost:8501
-Backend API will be available at http://localhost:8000/docs
+The UI will be available at [http://localhost:8501](http://localhost:8501) and the API docs at [http://localhost:8000/docs](http://localhost:8000/docs).
+Use `1@2.com` with password `1` to sign in to the demo.
 
-Frontend login with username: `1@2.com` and password: `1`
+### Local Development
 
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and create a virtual environment:
 
-## How to setup in local environment 
-I have created a Makefile to help you setup the environment with commands.
+```bash
+uv venv
+source .venv/bin/activate
+```
 
-### Prepare python environment
+2. Install dependencies:
 
-1. install uv
+```bash
+uv pip install -r uv.lock
+```
 
-https://docs.astral.sh/uv/getting-started/installation/
+3. Copy `.env.docker.example` to `.env` and update the environment variables. A minimal configuration looks like:
 
-2. create virtual environment
+```env
+PROJECT_NAME="Lyrebird Mini Tech API"
+ENV=local
+POSTGRES_SERVER=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=app
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=lyrebird
+JWT_SECRET="change-me-in-production"
+OPENAI_API_KEY="your-openai-api-key"
+LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
+LANGSMITH_API_KEY="your-langsmith-api-key"
+LANGSMITH_PROJECT="your-langsmith-project"
+API_BASE_URL="http://backend:8000"
+```
 
-
-https://docs.astral.sh/uv/pip/environments/
-
-
-### Prepare .env file
-1. copy .env.example to .env, use this template to fill in the .env file
-
-
-### Prepare database
-
-1. start docker
+4. Start Postgres and the backend:
 
 ```bash
 make start-service
-```
-
-2. init db with alembic
-```bash
 make init-db
 ```
 
+5. Run the development servers:
 
-### Start the dev server
 ```bash
 make dev-fastapi
 ```
 
-### Start the dev frontend
+In a separate terminal:
+
 ```bash
 make dev-frontend
 ```
-
 
