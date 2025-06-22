@@ -1,9 +1,37 @@
-from pydantic import BaseModel, ConfigDict, Field
-from datetime import datetime
-from sqlalchemy import Column, Integer
-from fastapi import UploadFile
+from pydantic import BaseModel, ConfigDict, EmailStr
 
-# Dictations
+
+class UserBase(BaseModel):
+    """Base user schema."""
+
+    email: EmailStr
+
+
+class UserCreate(UserBase):
+    """User creation schema."""
+
+    password: str
+
+
+class UserResponse(UserBase):
+    """User response schema."""
+
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+
+
+class Token(BaseModel):
+    """Token schema."""
+
+    access_token: str
+    token_type: str = "bearer"
+
+
+class LoginData(BaseModel):
+    """Login data schema."""
+
+    email: EmailStr
+    password: str
 
 
 class DictationInput(BaseModel):
@@ -26,22 +54,17 @@ class DictationsCreate(DictationsBase):
 
 
 class DictationFormatInput(BaseModel):
+    """Schema for formatting dictation with preferences."""
+
     transcript: str
     preferences: list[str]
 
 
 class DictationsCreateResponse(DictationsBase):
-    """Schema for DictationsCreateResponse data.
-
-    ConfigDict: it allows object data acccessed by attributes
-    via: https://docs.pydantic.dev/latest/api/config/?query=ConfigDict#pydantic.config.ConfigDict.from_attributes
-    """
+    """Schema for DictationsCreateResponse data."""
 
     model_config = ConfigDict(from_attributes=True)
     id: int
-
-
-# Preferences / edit
 
 
 class UserEditsInput(BaseModel):

@@ -1,9 +1,22 @@
-from typing import TYPE_CHECKING
-from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, Index
+from datetime import datetime, timezone
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 
-from api.core.database import Base
-from datetime import datetime, timezone
+from api.database import Base
+
+
+class UserModel(Base):
+    """User model."""
+
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)
+
+    dictations = relationship("DictationsModel", back_populates="user")
+    user_edits = relationship("UserEditsModel", back_populates="user")
+    user_preferences = relationship("UserPreferencesModel", back_populates="user")
 
 
 class DictationsModel(Base):
@@ -25,11 +38,10 @@ class DictationsModel(Base):
         nullable=False,
     )
 
-    # Relationships
     user = relationship("UserModel", back_populates="dictations")
 
     def __repr__(self):
-        return f"<Dictation(id={self.id}, user_id={self.user_id}, text={self.text}, formatted_text={self.formatted_text})>"
+        return f"<Dictation(id={self.id}, user_id={self.user_id})>"
 
 
 class UserEditsModel(Base):
@@ -51,14 +63,13 @@ class UserEditsModel(Base):
         nullable=False,
     )
 
-    # Relationships
     user = relationship("UserModel", back_populates="user_edits")
     user_preferences = relationship(
         "UserPreferencesModel", back_populates="user_edit", cascade="all, delete-orphan"
     )
 
     def __repr__(self):
-        return f"<UserEdit(id={self.id}, user_id={self.user_id}, original_text={self.original_text}, edited_text={self.edited_text})>"
+        return f"<UserEdit(id={self.id}, user_id={self.user_id})>"
 
 
 class UserPreferencesModel(Base):
@@ -82,9 +93,8 @@ class UserPreferencesModel(Base):
         nullable=False,
     )
 
-    # Relationships
     user = relationship("UserModel", back_populates="user_preferences")
     user_edit = relationship("UserEditsModel", back_populates="user_preferences")
 
     def __repr__(self):
-        return f"<UserPreference(id={self.id}, user_id={self.user_id}, user_edits_id={self.user_edits_id}, rules={self.rules})>"
+        return f"<UserPreference(id={self.id}, user_id={self.user_id})>"

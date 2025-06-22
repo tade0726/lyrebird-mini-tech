@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     ENV: Literal["local", "docker"] = "local"
     DEBUG: bool = True
 
-    ## Postgres
+    # Postgres
     POSTGRES_SERVER: str
     POSTGRES_PORT: int
     POSTGRES_DB: str
@@ -33,23 +33,23 @@ class Settings(BaseSettings):
         )
 
     # JWT Settings
-    JWT_SECRET: str  # Change in production
+    JWT_SECRET: str
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION: int = 30  # minutes
 
     # OpenAI
     OPENAI_API_KEY: str
 
-    # default model
+    # LLM Configuration
     DEFAULT_LLM_TEXT_MODEL: str = "gpt-4o"
     FORMAT_PROMPT: str = "format-transcript"
     EXTRACT_RULES_PROMPT: str = "create-memory"
 
     # LangSmith
-    LANGSMITH_TRACING: bool
-    LANGSMITH_ENDPOINT: str
-    LANGSMITH_API_KEY: str
-    LANGSMITH_PROJECT: str
+    LANGSMITH_TRACING: bool = False
+    LANGSMITH_ENDPOINT: str = ""
+    LANGSMITH_API_KEY: str = ""
+    LANGSMITH_PROJECT: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",

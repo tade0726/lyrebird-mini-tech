@@ -10,7 +10,7 @@ from langchain import hub as prompts
 from langchain_core.prompts import ChatPromptTemplate
 from langsmith.utils import LangSmithConflictError
 
-from api.core.config import settings
+from api.config import settings
 
 
 PROMPT_PATH = "api/llm/prompts/"
