@@ -1,16 +1,12 @@
 from fastapi import FastAPI
 
-from api.core.config import settings
-from api.core.logging import get_logger, setup_logging
-from api.src.users.routes import router as auth_router
-from api.src.dictations.routes import router as dictations_router
-from api.utils.migrations import run_migrations
+from api.config import settings
+from api.utils.logging import get_logger, setup_logging
+from api.auth import router as auth_router
+from api.dictations import router as dictations_router
 
 # Set up logging configuration
 setup_logging()
-
-# Optional: Run migrations on startup
-# run_migrations()
 
 # Set up logger for this module
 logger = get_logger(__name__)

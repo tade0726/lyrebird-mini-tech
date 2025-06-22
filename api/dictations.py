@@ -1,22 +1,19 @@
-from fastapi import APIRouter, Depends, File, Form, UploadFile, status, HTTPException
+from fastapi import APIRouter, Depends, File, UploadFile, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List
 
-from api.core.database import get_session
-from api.core.logging import get_logger
-from api.core.security import get_current_user
-from api.src.dictations.schemas import (
+from api.database import get_session
+from api.utils.logging import get_logger
+from api.utils.security import get_current_user
+from api.schemas import (
     DictationsCreateResponse,
-    DictationInput,
     UserEditsInput,
     UserPreferencesResponse,
 )
-from api.src.dictations.service import DictationsService, UserPreferencesService
-from api.src.users.models import UserModel
+from api.services.audio_service import AudioService, PreferencesService
+from api.models import UserModel
 
-
-# Set up logger for this module
 logger = get_logger(__name__)
-
 
 router = APIRouter(prefix="/dictations", tags=["dictations"])
 
@@ -29,20 +26,14 @@ async def create_dictation(
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(get_current_user),
 ) -> DictationsCreateResponse:
-    """
-    Accept an audio file for dictation processing.
+    """Accept an audio file for dictation processing."""
 
-    The current user is injected from the Bearer token.
-
-    Supported audio formats: .mp3, .wav, .m4a, .ogg
-    Maximum file size: 10MB
-    """
     # Validate file type
     allowed_content_types = ["audio/mpeg", "audio/wav", "audio/mp4", "audio/ogg"]
     if audio.content_type not in allowed_content_types:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unsupported file type. Allowed types: {', '.join([t.split('/')[-1] for t in allowed_content_types])}",
+            detail=f"Unsupported file type. Allowed: {', '.join([t.split('/')[-1] for t in allowed_content_types])}",
         )
 
     # Validate file size (10MB max)
@@ -51,21 +42,14 @@ async def create_dictation(
     if len(content) > max_size:
         raise HTTPException(
             status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            detail=f"File too large. Maximum size is 10MB",
+            detail="File too large. Maximum size is 10MB",
         )
-
-    # Reset file cursor after reading
-    await audio.seek(0)
 
     try:
-        dictation_input = DictationInput(
-            audio=content,
-            user_id=user.id,
-        )
-        return await DictationsService(session).create_dictation(dictation_input)
+        audio_service = AudioService(session)
+        return await audio_service.process_audio(content, user.id)
     except Exception as e:
-        # Log the error for debugging
-        print(f"Error processing dictation: {str(e)}")
+        logger.error(f"Error processing dictation: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to process the audio file",
@@ -79,6 +63,7 @@ async def preference_extract(
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(get_current_user),
 ) -> UserPreferencesResponse:
+    """Extract user preferences from text edits."""
 
     user_edits = UserEditsInput(
         user_id=user.id,
@@ -86,12 +71,16 @@ async def preference_extract(
         edited_text=edited_text,
     )
 
-    return await UserPreferencesService(session).preference_extract(user_edits)
+    preferences_service = PreferencesService(session)
+    return await preferences_service.extract_preferences(user_edits)
 
 
-@router.get("/preferences", response_model=list[UserPreferencesResponse])
+@router.get("/preferences", response_model=List[UserPreferencesResponse])
 async def get_user_preferences(
     session: AsyncSession = Depends(get_session),
     user: UserModel = Depends(get_current_user),
-) -> list[UserPreferencesResponse]:
-    return await UserPreferencesService(session).query_user_preferences(user.id)
+) -> List[UserPreferencesResponse]:
+    """Get all user preferences."""
+
+    preferences_service = PreferencesService(session)
+    return await preferences_service.get_user_preferences(user.id)
