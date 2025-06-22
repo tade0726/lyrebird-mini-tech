@@ -2,7 +2,16 @@ format:
 	black .
 
 test:
-	uv run pytest -s -v api/tests
+	uv run python api/run_tests.py --verbose
+
+test-fast:
+	uv run python api/run_tests.py --skip-slow --fail-fast
+
+test-unit:
+	uv run python api/run_tests.py --unit --verbose
+
+test-integration:
+	uv run python api/run_tests.py --integration --verbose
 
 start-service:
 	docker compose -f docker-compose.yaml up --build -d
